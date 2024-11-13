@@ -1,0 +1,18 @@
+services:
+  battery-monitor:
+    image: battery-monitor:latest
+    container_name: battery-monitor
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host
+    restart: always
+    environment:
+      ROBOT_ID: robot
+      ROS_DOMAIN_ID: "34"
+      ROS_SETUP_FILES: "/ros2_ws/install/setup.bash"
+      STARTUP_TYPE: run
+      ROS_BU_PKG: "battery_monitor battery_monitor"
+      KUBECONFIG: "/.kube/config"
+    volumes:
+      - /etc/rancher/k3s/k3s.yaml:/.kube/config

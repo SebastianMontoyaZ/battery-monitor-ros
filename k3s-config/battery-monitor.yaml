@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ros-battery-monitor
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: battery-monitor
+  name: battery-monitor
+  namespace: ros-battery-monitor
+spec:
+  containers:
+  - name: battery-monitor
+    image: battery-monitor:latest
+    imagePullPolicy: Never
+    ports:
+    - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: battery-monitor
+  namespace: ros-battery-monitor
+  labels:
+    app: battery-monitor
+spec:
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: battery-monitor
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: battery-monitor
+  namespace: prometheus
+  labels:
+    serviceMonitorSelector: prometheus
+    app: battery-monitor
+spec:
+  selector:
+    matchLabels:
+      app: battery-monitor  # Matches the service label
+  endpoints:
+  - port: "http"
+    path: /metrics
+    interval: 10s  # Adjust the interval as needed
+  namespaceSelector:
+    matchNames:
+    - ros-battery-monitor
