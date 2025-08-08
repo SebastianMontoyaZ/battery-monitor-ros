@@ -1,5 +1,5 @@
 # First stage: Build the ROS 2 workspace
-FROM robotnik/ros:humble-builder-0.6.0 as builder
+FROM robotnik/ros:humble-builder-0.6.2 as builder
 
 # Copy the workspace's source code into the Docker image
 WORKDIR /ros2_ws
@@ -19,7 +19,7 @@ WORKDIR /ros2_ws
 RUN . /opt/ros/humble/setup.sh && colcon build --install-base /ros2_ws/install
 
 # Second stage: Copy the built artifacts into a smaller image
-FROM robotnik/ros:humble-base-0.6.0
+FROM robotnik/ros:humble-base-0.6.2
 
 # Copy the install folder from the builder stage
 WORKDIR /ros2_ws
